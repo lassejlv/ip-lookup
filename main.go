@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/lassejlv/iplookup/utils"
 )
 
 type ApiResponse struct {
@@ -20,17 +22,20 @@ type ApiResponse struct {
 }
 
 var API_URL string = "https://api.iplocation.net"
+var IP string
 
 func main() {
 
 	if len(os.Args) < 2 {
-		fmt.Println("Provide an IP please")
-		os.Exit(1)
+		IP = utils.FetchUsersIp()
+		fmt.Println("👀 Using your networks ip since no ip was provided")
+	} else {
+		IP = os.Args[1]
 	}
 
-	ip := os.Args[1]
+	full_url := fmt.Sprintf("%s/?ip=%s", API_URL, IP)
 
-	resp, err := http.Get(fmt.Sprintf("%s/?ip=%s", API_URL, ip))
+	resp, err := http.Get(full_url)
 
 	if err != nil {
 		fmt.Println("No response sadly :(")
